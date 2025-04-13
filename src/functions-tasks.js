@@ -18,7 +18,7 @@
  *
  */
 function getCurrentFunctionName() {
-  throw new Error('Not implemented');
+  return getCurrentFunctionName.name;
 }
 
 /**
@@ -32,8 +32,8 @@ function getCurrentFunctionName() {
  *   getFunctionBody(hiHello) => "function hiHello() { console.log('hello world'); }"
  *
  */
-function getFunctionBody(/* func */) {
-  throw new Error('Not implemented');
+function getFunctionBody(func) {
+  return func ? func.toString() : '';
 }
 
 /**
@@ -50,8 +50,8 @@ function getFunctionBody(/* func */) {
  *  ]) => [0, 1, 2]
  *
  */
-function getArgumentsCount(/* funcs */) {
-  throw new Error('Not implemented');
+function getArgumentsCount(funcs) {
+  return funcs.map((_, i) => i);
 }
 
 /**
@@ -70,8 +70,10 @@ function getArgumentsCount(/* funcs */) {
  *   power05(16) => 4
  *
  */
-function getPowerFunction(/* exponent */) {
-  throw new Error('Not implemented');
+function getPowerFunction(exponent) {
+  return function power(value) {
+    return value ** exponent;
+  };
 }
 
 /**
@@ -87,8 +89,19 @@ function getPowerFunction(/* exponent */) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom() {
-  throw new Error('Not implemented');
+function getPolynom(...arg) {
+  return function polynom(x) {
+    if (arg.length === 0) {
+      return null;
+    }
+    if (arg.length === 1) {
+      return arg[0];
+    }
+    if (arg.length === 2) {
+      return arg[0] * x + arg[1];
+    }
+    return arg[0] * x ** 2 + arg[1] * x + arg[2];
+  };
 }
 
 /**
@@ -105,8 +118,11 @@ function getPolynom() {
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
-function memoize(/* func */) {
-  throw new Error('Not implemented');
+function memoize(func) {
+  const copyFun = func();
+  return () => {
+    return copyFun;
+  };
 }
 
 /**
@@ -124,8 +140,18 @@ function memoize(/* func */) {
  * }, 2);
  * retryer() => 2
  */
-function retry(/* func, attempts */) {
-  throw new Error('Not implemented');
+function retry(func, attempts) {
+  return function retryer() {
+    let error;
+    for (let i = 0; i < attempts; i += 1) {
+      try {
+        return func();
+      } catch (err) {
+        error = err;
+      }
+    }
+    return error;
+  };
 }
 
 /**
@@ -151,8 +177,14 @@ function retry(/* func, attempts */) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return function copyFun(...arg) {
+    const resStr = arg.map((args) => JSON.stringify(args)).join(',');
+    logFunc(`${func.name}(${resStr}) starts`);
+    const funRes = func(...arg);
+    logFunc(`${func.name}(${resStr}) ends`);
+    return funRes;
+  };
 }
 
 /**
@@ -168,10 +200,12 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args1) {
+  return function fun(...arg) {
+    const result = [...args1, ...arg];
+    return fn(...result);
+  };
 }
-
 /**
  * Returns the id generator function that returns next integer starting
  * from specified number every time when invoking.
@@ -189,8 +223,12 @@ function partialUsingArguments(/* fn, ...args1 */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  let result = startFrom - 1;
+  return function acc() {
+    result += 1;
+    return result;
+  };
 }
 
 module.exports = {
